@@ -5,12 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Zin.Infra.Repository;
 
-/// <summary>What a User was granted: whole groups and single devices.</summary>
 public record UserAccessIds(Guid[] GroupIds, Guid[] DeviceIds);
 
 public class AccessRepository(DBContext _context)
 {
-    // A device is visible through a grant on it, or on any group it is in.
     private IQueryable<Device> VisibleTo(Guid userId) =>
         _context.Set<Device>().Where(d =>
             _context.Set<UserDeviceAccess>().Any(a => a.UserId == userId && a.DeviceId == d.Id)
@@ -30,7 +28,6 @@ public class AccessRepository(DBContext _context)
     public async Task<Guid[]> GroupIdsOf(Guid deviceId) =>
         await _context.Set<DeviceGroup>().Where(m => m.DeviceId == deviceId).Select(m => m.GroupId).ToArrayAsync();
 
-    /// <summary>Replaces the device's groups with exactly these.</summary>
     public async Task SetDeviceGroups(Guid deviceId, IEnumerable<Guid> groupIds)
     {
         _context.Set<DeviceGroup>().RemoveRange(_context.Set<DeviceGroup>().Where(m => m.DeviceId == deviceId));
@@ -53,7 +50,6 @@ public class AccessRepository(DBContext _context)
                 devices.Where(a => a.UserId == id).Select(a => a.DeviceId).ToArray()));
     }
 
-    /// <summary>Replaces the user's grants with exactly these.</summary>
     public async Task SetAccess(Guid userId, IEnumerable<Guid> groupIds, IEnumerable<Guid> deviceIds)
     {
         _context.Set<UserGroupAccess>().RemoveRange(_context.Set<UserGroupAccess>().Where(a => a.UserId == userId));
@@ -63,7 +59,6 @@ public class AccessRepository(DBContext _context)
         await _context.SaveChangesAsync();
     }
 
-    /// <summary>True when every one of these groups and devices exists.</summary>
     public async Task<bool> AllExist(IEnumerable<Guid> groupIds, IEnumerable<Guid> deviceIds)
     {
         List<Guid> groups = groupIds.Distinct().ToList();

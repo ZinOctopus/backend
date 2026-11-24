@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Zin.Infra.Repository;
 
-/// <summary>One point of a usage chart: averages over one step.</summary>
 public record MetricPoint(DateTime At, double Cpu, double Ram, double Disk, double NetIn, double NetOut);
 
 public class DeviceMetricRepository(DBContext _context)
@@ -16,7 +15,6 @@ public class DeviceMetricRepository(DBContext _context)
         await _context.SaveChangesAsync();
     }
 
-    /// <summary>Averages per step from <paramref name="from"/> on, oldest first; steps with no samples are left out.</summary>
     public async Task<List<MetricPoint>> Series(Guid deviceId, DateTime from, TimeSpan step)
     {
         return await _context.Database.SqlQuery<MetricPoint>($"""

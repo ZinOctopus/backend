@@ -104,7 +104,6 @@ public partial class Program
             }
         );
         
-        // shortcut: any origin allowed (with credentials, so the cookie works cross-site), for dev; restrict to the frontend origin(s) before production.
         builder.Services.AddCors(o => o.AddDefaultPolicy(p => p
             .SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 

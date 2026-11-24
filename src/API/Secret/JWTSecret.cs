@@ -46,7 +46,6 @@ public class JWTSecret(IConfiguration configuration)
         response.Cookies.Append(SessionCookie, CreateToken(user, SessionLifetime), new CookieOptions
         {
             HttpOnly = true,
-            // shortcut: None+Secure so a frontend on another domain can send the cookie; back to Strict once both share a site.
             SameSite = SameSiteMode.None,
             Path = "/",
             MaxAge = SessionLifetime,

@@ -13,7 +13,6 @@ public class DeviceController(DeviceService deviceService, AccessService accessS
 {
     private const int MaxAlias = 100;
 
-    // Each range is cut into as many points as BoxMesh's Performance chart draws: 60, 96 and 168.
     private static readonly Dictionary<string, (TimeSpan Span, TimeSpan Step)> Ranges = new()
     {
         ["1h"] = (TimeSpan.FromHours(1), TimeSpan.FromMinutes(1)),
@@ -21,12 +20,10 @@ public class DeviceController(DeviceService deviceService, AccessService accessS
         ["7d"] = (TimeSpan.FromDays(7), TimeSpan.FromHours(1)),
     };
 
-    // The signed-in account's ID; an empty one matches no grant.
     private Guid Me => Guid.TryParse(User.FindFirst("id")?.Value, out Guid me) ? me : Guid.Empty;
 
     private async Task<bool> CanSee(Guid deviceId) => User.IsInRole(Roles.System) || await accessService.CanSee(Me, deviceId);
 
-    // The device, or null when it does not exist or the caller may not see it.
     private async Task<Device?> VisibleDevice(Guid id) => await CanSee(id) ? await deviceService.GetById(id) : null;
 
     [HttpGet()]
@@ -44,7 +41,6 @@ public class DeviceController(DeviceService deviceService, AccessService accessS
         return device == null ? NotFound() : Ok(DeviceResponse.From(device, await accessService.GroupIdsOf(id)));
     }
 
-    /// <summary>Sets the device's alias; an empty one clears it.</summary>
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult<DeviceResponse>> UpdateDevice(Guid id, [FromBody] UpdateDeviceRequest request)
     {

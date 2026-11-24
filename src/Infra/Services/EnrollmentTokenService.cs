@@ -15,7 +15,6 @@ public class EnrollmentTokenService(EnrollmentTokenRepository tokenRepository)
 
     public async Task<EnrollmentToken?> GetById(Guid id) => await tokenRepository.FindByID(id);
 
-    /// <summary>Creates a token valid for <paramref name="lifetime"/>.</summary>
     public async Task<EnrollmentToken> Create(TimeSpan lifetime, int? maxDevices, Guid? createdBy) =>
         await tokenRepository.Create(new EnrollmentToken
         {
@@ -26,6 +25,5 @@ public class EnrollmentTokenService(EnrollmentTokenRepository tokenRepository)
             CreatedBy = createdBy,
         });
 
-    /// <summary>Revokes the token: it is deleted, so an agent presenting it is no longer let in.</summary>
     public async Task<EnrollmentToken?> Delete(Guid id) => await tokenRepository.Delete(id);
 }

@@ -12,7 +12,6 @@ public class GroupService(GroupRepository groupRepository)
     }
 
     public async Task<Group?> GetById(Guid id) => await groupRepository.FindByID(id);
-    /// <summary>Creates the group; null when the name is already taken.</summary>
     public async Task<Group?> Create(string name)
     {
         if (await groupRepository.NameTaken(name))
@@ -22,7 +21,6 @@ public class GroupService(GroupRepository groupRepository)
         return await groupRepository.Create(new Group { Id = Guid.NewGuid(), Name = name });
     }
 
-    /// <summary>Renames the group. Group is null when it does not exist; Taken when another group already has the name.</summary>
     public async Task<(Group? Group, bool Taken)> Rename(Guid id, string name)
     {
         Group? record = await groupRepository.FindByID(id);

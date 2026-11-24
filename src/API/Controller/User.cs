@@ -5,13 +5,11 @@ using Zin.Infra.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// Only a System account manages accounts. An account edits itself through PATCH /account.
 [ApiController]
 [Authorize(Roles = Roles.System)]
 [Route("/users")]
 public class UserController(UserService userService, AccessService accessService) : ControllerBase
 {
-    // True when id is the account making this request.
     private bool IsSelf(Guid id) => Guid.TryParse(User.FindFirst("id")?.Value, out Guid me) && me == id;
 
     [HttpGet]
@@ -29,7 +27,6 @@ public class UserController(UserService userService, AccessService accessService
         return user == null ? NotFound() : Ok(UserResponse.From(user, await accessService.AccessOf(id)));
     }
 
-    /// <summary>Creates the account outright: the System account sets the password and no email is sent. Access is granted afterwards.</summary>
     [HttpPost]
     public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
     {

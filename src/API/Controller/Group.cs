@@ -5,7 +5,6 @@ using Zin.Infra.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// Any signed-in account can read groups; only a System account can change them.
 [ApiController]
 [Authorize]
 [Route("/groups")]
@@ -13,7 +12,6 @@ public class GroupController(GroupService groupService) : ControllerBase
 {
     private const int MaxName = 100;
 
-    // The trimmed name, or null with the reason in error when it is empty or too long.
     private static string? ValidName(GroupRequest request, out string error)
     {
         string name = (request.Name ?? "").Trim();
@@ -50,7 +48,6 @@ public class GroupController(GroupService groupService) : ControllerBase
         return group == null ? Conflict("a group with this name already exists") : Ok(GroupResponse.From(group));
     }
 
-    /// <summary>Renames the group.</summary>
     [Authorize(Roles = Roles.System)]
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult<GroupResponse>> UpdateGroup(Guid id, [FromBody] GroupRequest request)

@@ -1,5 +1,4 @@
 using Zin.API.GRPC;
-// Only this type: the DTO namespace has its own DeviceResponse, which would clash with the gRPC one.
 using ProcessResponse = Zin.API.DTO.Devices.ProcessResponse;
 using Grpc.Core;
 
@@ -9,7 +8,6 @@ using Zin.Infra.Service;
 
 public class GDeviceService(DeviceService deviceService) : DeviceGRPC.DeviceGRPCBase
 {
-    // shortcut: any caller that can reach the port may report; check an enrollment token once agents enroll.
     public override async Task<DeviceResponse> Ping(DeviceRequest device,ServerCallContext context)
     {
         if (!Guid.TryParse(device.Id, out Guid id) || string.IsNullOrWhiteSpace(device.HostName))

@@ -10,7 +10,6 @@ public class AuthController(
     JWTSecret jwtSecret
 ) : ControllerBase
 {
-    /// <summary>For API clients: returns the tokens to send as a Bearer header.</summary>
     [HttpPost("/sign-in")]
     public async Task<ActionResult<SignInResponse>> signIn([FromBody] SignInRequest signInRequest)
     {
@@ -25,7 +24,6 @@ public class AuthController(
         ));
     }
 
-    /// <summary>For the web console: sets the session cookie and returns the account.</summary>
     [HttpPost("/log-in")]
     public async Task<ActionResult<AccountResponse>> LogIn([FromBody] SignInRequest request)
     {
