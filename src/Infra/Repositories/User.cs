@@ -12,7 +12,6 @@ public class UserRepository(DBContext _context) : BaseRepository<User>(_context)
         return await FindBy("Email",Email);
     }
 
-    /// <summary>True when another account (not exceptId) uses this email, ignoring case.</summary>
     public async Task<bool> EmailTaken(string email, Guid? exceptId = null)
     {
         string lower = email.ToLower();

@@ -5,7 +5,6 @@ using Zin.Infra.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// Only a System account issues, reads and revokes enrollment tokens. A token only authenticates an enrollment and has no other settings.
 [ApiController]
 [Authorize(Roles = Roles.System)]
 [Route("/enrollment-tokens")]
@@ -32,7 +31,6 @@ public class EnrollmentTokenController(EnrollmentTokenService tokenService) : Co
         return token == null ? NotFound() : Ok(EnrollmentTokenResponse.From(token));
     }
 
-    /// <summary>Issues a token.</summary>
     [HttpPost]
     public async Task<ActionResult<EnrollmentTokenResponse>> CreateToken([FromBody] CreateEnrollmentTokenRequest request)
     {
@@ -49,7 +47,6 @@ public class EnrollmentTokenController(EnrollmentTokenService tokenService) : Co
         return Ok(EnrollmentTokenResponse.From(record));
     }
 
-    /// <summary>Revokes the token.</summary>
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteToken(Guid id)
     {

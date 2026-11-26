@@ -15,7 +15,6 @@ namespace Zin.Infra.Service
         {
             return await deviceRepository.FindByID(id);
         }
-        /// <summary>Renames the device in the console; leaves UpdatedAt alone, since that marks when the agent last reported.</summary>
         public async Task<Device?> SetAlias(Guid id, string alias)
         {
             Device? record = await deviceRepository.FindByID(id);
@@ -36,8 +35,6 @@ namespace Zin.Infra.Service
             }
             else
             {
-                // Update copies every field, so carry over what the agent doesn't send (when the device enrolled,
-                // the console's alias) and stamp when it was last heard from.
                 device.CreatedAt = record.CreatedAt;
                 device.CreatedBy = record.CreatedBy;
                 device.Alias = record.Alias;

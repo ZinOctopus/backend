@@ -5,13 +5,11 @@ using Zin.Infra.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// The signed-in account looking after itself: any role, only its own name and password.
 [ApiController]
 [Authorize]
 [Route("/account")]
 public class AccountController(UserService userService, AccessService accessService) : ControllerBase
 {
-    /// <summary>Changes the caller's own name and/or password; a new password needs the current one.</summary>
     [HttpPatch]
     public async Task<ActionResult<UserResponse>> UpdateAccount([FromBody] UpdateAccountRequest request)
     {

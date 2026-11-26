@@ -9,7 +9,6 @@ namespace Zin.Infra.Service
         PasswordHasher<User> hasher
     )
     {
-        /// <summary>Creates a System account; the only way to make an account today.</summary>
         public async Task<User> SignUp(string Email, string Password)
         {
             User user = new User
@@ -48,7 +47,6 @@ namespace Zin.Infra.Service
 
         public async Task<User?> GetById(Guid id) => await userRepository.FindByID(id);
 
-        /// <summary>Creates the account; null when the email is already used.</summary>
         public async Task<User?> Create(string name, string email, string password, string role)
         {
             if (await userRepository.EmailTaken(email))
@@ -60,7 +58,6 @@ namespace Zin.Infra.Service
             return await userRepository.Create(user);
         }
 
-        /// <summary>Changes only what is given; null when the account does not exist.</summary>
         public async Task<User?> Update(Guid id, string? name, bool? disabled, string? password)
         {
             User? user = await userRepository.FindByID(id);

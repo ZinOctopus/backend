@@ -21,10 +21,12 @@ public class JWTSecret(IConfiguration configuration)
     }
     public IDictionary<string,object> GenerateClaims(User user)
     {
-        Dictionary<string, object> claims = new Dictionary<string, object>();
-        claims.Add("id", user.Id);
-        claims.Add("email", user.Email);
-        claims.Add(RoleClaim, user.Role);
+        Dictionary<string, object> claims = new Dictionary<string, object>
+        {
+            { "id", user.Id },
+            { "email", user.Email },
+            { RoleClaim, user.Role }
+        };
         return claims;
     }
     private string CreateToken(User user, TimeSpan lifetime)
@@ -46,7 +48,6 @@ public class JWTSecret(IConfiguration configuration)
         response.Cookies.Append(SessionCookie, CreateToken(user, SessionLifetime), new CookieOptions
         {
             HttpOnly = true,
-            // shortcut: None+Secure so a frontend on another domain can send the cookie; back to Strict once both share a site.
             SameSite = SameSiteMode.None,
             Path = "/",
             MaxAge = SessionLifetime,

@@ -10,7 +10,6 @@ public class DeviceMetricConfiguration : IEntityTypeConfiguration<DeviceMetric>
     {
         builder.ToTable("DeviceMetric");
         builder.HasKey(x => x.Id);
-        // Every read is one device over a time window.
         builder.HasIndex(x => new { x.DeviceId, x.At });
         builder.HasOne<Device>().WithMany().HasForeignKey(x => x.DeviceId).OnDelete(DeleteBehavior.Cascade);
     }

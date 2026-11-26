@@ -3,7 +3,6 @@ using Zin.Infra.Repository;
 
 namespace Zin.Infra.Service;
 
-/// <summary>Who may see which device: group membership of devices, and what each User was granted.</summary>
 public class AccessService(AccessRepository accessRepository)
 {
     public Task<List<Device>> DevicesFor(Guid userId) => accessRepository.DevicesFor(userId);
