@@ -1,6 +1,8 @@
 -include .env
 export
 
+watch:
+	dotnet watch run --project src/API
 server:
 	dotnet run --project src/API
 migration:

@@ -3,7 +3,6 @@ using Zin.API.Filter;
 using Zin.API.Secret;
 using Zin.Infra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 public partial class Program
@@ -14,40 +13,31 @@ public partial class Program
         builder.Services.AddGrpc();
         builder.Services.AddScoped<JWTSecret>();
         builder.Services.AddInfrastructure(builder.Configuration);
-        builder.Services.AddHostedService<MetricRetention>();
-        builder.Services.AddOpenApi(options =>
-        {
-            options.AddDocumentTransformer((document, context, cancellationToken) =>
-            {
-                document.Components ??= new OpenApiComponents();
-                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
-                document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Description = "Enter your JWT Access Token."
-                };
-                return Task.CompletedTask;
-            });
-            options.AddOperationTransformer((operation, context, cancellationToken) =>
-            {
-                var metadata = context.Description.ActionDescriptor.EndpointMetadata;
-                var hasAuthorize = metadata.OfType<IAuthorizeData>().Any();
-                var hasAllowAnonymous = metadata.OfType<IAllowAnonymous>().Any();
-                if (hasAuthorize && !hasAllowAnonymous)
-                {
-                    operation.Security ??= [];
-                    operation.Security.Add(new OpenApiSecurityRequirement
-                    {
-                        [new OpenApiSecuritySchemeReference("Bearer", context.Document)] = []
-                    });
-                }
-                return Task.CompletedTask;
-            });
-        });
         builder.Services.AddExceptionHandler<ExceptionFilter>();
 
+        builder.Services.AddOpenApi(
+            options =>
+            {
+                options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+                options.AddDocumentTransformer((document, context, cancellationToken) =>
+                    {
+                        document.Components ??= new OpenApiComponents(); 
+                        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+                        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            BearerFormat = "JWT",
+                            Description = "Enter your JWT Access Token."
+                        };
+                        document.Info.Title = "Zin RMM";
+                        document.Info.Version = "1.0.0";
+                        return Task.CompletedTask;
+                    }
+                );
+            }
+        );
+        
         builder.Services.AddAuthentication(
             options =>
             {
@@ -60,10 +50,6 @@ public partial class Program
                 string SecretKey = builder.Configuration["Jwt:SecretKey"]!;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey)),
@@ -103,10 +89,6 @@ public partial class Program
                 options.Filters.Add<ResponseFilter>();
             }
         );
-        
-        // shortcut: any origin allowed (with credentials, so the cookie works cross-site), for dev; restrict to the frontend origin(s) before production.
-        builder.Services.AddCors(o => o.AddDefaultPolicy(p => p
-            .SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
         builder.Services.AddProblemDetails();
         
@@ -114,8 +96,7 @@ public partial class Program
 
         if (!app.Environment.IsProduction())
         {
-            app.MapOpenApi("/swagger/v1/swagger.json");
-            app.MapSwaggerUI();
+            app.MapOpenApi();
         }
 
         app.UseExceptionHandler();

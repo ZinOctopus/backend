@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API (debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/API/bin/Debug/net10.0/API.dll",
+      "cwd": "${workspaceFolder}/src/API",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
+  ]
+}

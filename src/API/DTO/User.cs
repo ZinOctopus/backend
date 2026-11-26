@@ -5,7 +5,6 @@ using Zin.Infra.Repository;
 
 namespace Zin.API.DTO.Users;
 
-/// <summary>The limits on an account's fields, shared by every endpoint that sets them.</summary>
 public static class AccountRules
 {
     public const int MaxName = 100;

@@ -13,11 +13,3 @@ services:
       - "5432:5432"
     volumes:
       - ./postgresql:/var/lib/postgresql
-
-  redis:
-    image: redis:8
-    restart: unless-stopped
-    container_name: ZinRedis
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}"]
-    ports:
-      - "6379:6379"
